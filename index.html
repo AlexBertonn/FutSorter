@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sorteador de Times</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        background: #0b0b0b;
+        color: #f1f1f1;
+
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 700px;
+
+        background: #151515;
+
+        border: 1px solid #2a2a2a;
+
+        border-radius: 12px;
+
+        padding: 25px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 10px;
+
+        font-size: 28px;
+        font-weight: bold;
+
+        color: #ffffff;
+      }
+
+      .subtitle {
+        text-align: center;
+
+        color: #8a8a8a;
+
+        font-size: 14px;
+
+        margin-bottom: 20px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 140px;
+
+        resize: none;
+
+        border: 1px solid #2f2f2f;
+
+        background: #101010;
+
+        color: white;
+
+        border-radius: 8px;
+
+        padding: 14px;
+
+        font-size: 15px;
+
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: #555;
+      }
+
+      textarea::placeholder {
+        color: #666;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+
+        margin-top: 15px;
+      }
+
+      button {
+        flex: 1;
+
+        padding: 12px;
+
+        border: 1px solid #333;
+
+        background: #222;
+
+        color: white;
+
+        border-radius: 8px;
+
+        cursor: pointer;
+
+        transition: 0.2s;
+      }
+
+      button:hover {
+        background: #2d2d2d;
+      }
+
+      .times {
+        margin-top: 25px;
+
+        display: grid;
+
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
+        gap: 15px;
+      }
+
+      .time {
+        background: #101010;
+
+        border: 1px solid #262626;
+
+        border-radius: 10px;
+
+        padding: 15px;
+      }
+
+      .time h2 {
+        text-align: center;
+
+        margin-bottom: 12px;
+
+        font-size: 18px;
+
+        color: #dcdcdc;
+      }
+
+      .time ul {
+        list-style: none;
+      }
+
+      .time li {
+        padding: 8px;
+
+        margin-bottom: 8px;
+
+        background: #1c1c1c;
+
+        border-radius: 6px;
+
+        color: #cfcfcf;
+
+        font-size: 14px;
+      }
+
+      .time li:last-child {
+        margin-bottom: 0;
+      }
+
+      @media (max-width: 600px) {
+        .buttons {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>⚽ Sorteador de Times</h1>
+
+      <p class="subtitle">Digite os nomes separados por linha ou vírgula</p>
+
+      <textarea id="nomes"></textarea>
+
+      <div class="buttons">
+        <button onclick="sortearTimes()">Sortear</button>
+
+        <button onclick="limparTudo()">Limpar</button>
+      </div>
+
+      <div class="times" id="times"></div>
+    </div>
+
+    <script>
+      function embaralhar(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+
+        return array;
+      }
+
+      function sortearTimes() {
+        const textarea = document.getElementById("nomes");
+        const containerTimes = document.getElementById("times");
+
+        let nomes = textarea.value
+          .split(/[\n,]+/)
+          .map((nome) => nome.trim())
+          .filter((nome) => nome !== "");
+
+        if (nomes.length < 2) {
+          alert("Digite pelo menos 2 jogadores.");
+          return;
+        }
+
+        nomes = embaralhar(nomes);
+
+        const quantidadeTimes = 4;
+
+        const times = [[], [], [], []];
+
+        nomes.forEach((nome, index) => {
+          times[index % quantidadeTimes].push(nome);
+        });
+
+        containerTimes.innerHTML = "";
+
+        times.forEach((time, index) => {
+          if (time.length === 0) return;
+
+          const div = document.createElement("div");
+
+          div.classList.add("time");
+
+          div.innerHTML = `
+          <h2>Time ${index + 1}</h2>
+
+          <ul>
+            ${time.map((jogador) => `<li>${jogador}</li>`).join("")}
+          </ul>
+        `;
+
+          containerTimes.appendChild(div);
+        });
+      }
+
+      function limparTudo() {
+        document.getElementById("nomes").value = "";
+        document.getElementById("times").innerHTML = "";
+      }
+    </script>
+  </body>
+</html>
